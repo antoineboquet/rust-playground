@@ -107,7 +107,7 @@ impl<T: Clone> Trie<T> {
         words
     }
 
-    // Returns the index of the most direct parent for a given word.
+    /// Returns the index of the most direct parent for a given word.
     fn get_previous_word_index(&self, word: &str) -> Option<usize> {
         let mut current_node = self;
         let mut previous_word_index = None;
