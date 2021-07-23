@@ -137,8 +137,10 @@ impl<T: Clone> Trie<T> {
                 words.push((new_word, value.clone()));
             }
 
-            if let Some(next_node) = self.children.get(&k) {
-                words.extend(next_node.dfs(prefix, &buffer));
+            if !v.is_leaf {
+                if let Some(next_node) = self.children.get(&k) {
+                    words.extend(next_node.dfs(prefix, &buffer));
+                }
             }
         }
 
