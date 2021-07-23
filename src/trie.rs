@@ -3,7 +3,6 @@ use std::collections::HashMap;
 #[derive(Debug)]
 pub struct Trie<T> {
     children: HashMap<char, Trie<T>>,
-    depth: usize,
     is_leaf: bool,
     value: Option<T>
 }
@@ -12,7 +11,6 @@ impl<T> Default for Trie<T> {
     fn default() -> Self {
         Self {
             children: HashMap::new(),
-            depth: 0,
             is_leaf: false,
             value: None
         }
@@ -42,18 +40,11 @@ impl<T: Clone> Trie<T> {
 
     /// Creates the nodes that represent a new word.
     pub fn insert(&mut self, word: &str, value: Option<T>) {
-        let mut i = 0;
-
         let mut last_node = word.chars().fold(self, |current_node, c| {
-            current_node.depth = i;
             current_node.is_leaf = false;
-
-            i += 1;
-
             current_node.children.entry(c).or_insert(Trie::default())
         });
 
-        last_node.depth = word.chars().count();
         last_node.value = value;
 
         if last_node.children.is_empty() {
@@ -128,12 +119,13 @@ impl<T: Clone> Trie<T> {
 
     /// Depth-first search.
     fn dfs(&self, prefix: &str, buffer: &str) -> Vec<(String, T)> {
+        let depth = prefix.chars().count() + buffer.chars().count();
         let mut words = Vec::new();
 
         for (k, v) in self.children.iter() {
             let mut buffer = buffer.chars()
                 .into_iter()
-                .take(self.depth)
+                .take(depth)
                 .collect::<String>();
 
             buffer.push(*k);
